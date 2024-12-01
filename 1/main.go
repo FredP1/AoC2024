@@ -51,10 +51,8 @@ func main() {
 	for scanner.Scan() {
 		line := scanner.Text()
 
-		// Split the line into columns by three spaces
 		columns := strings.Split(line, "   ")
 		if len(columns) == 2 {
-			// Convert both columns to integers
 			leftValue, err1 := strconv.Atoi(strings.TrimSpace(columns[0]))
 			rightValue, err2 := strconv.Atoi(strings.TrimSpace(columns[1]))
 			if err1 != nil || err2 != nil {
