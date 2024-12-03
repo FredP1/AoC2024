@@ -20,10 +20,7 @@ func safe_check_2(reports []int) int {
 
 	for i := 0; i < len(reports)-1; i++ {
 		absDiff = AbsDiff(reports[i], reports[i+1])
-		if absDiff > 3 {
-			return 0
-		}
-		if absDiff == 0 {
+		if absDiff > 3 || absDiff < 1 {
 			return 0
 		}
 	}
@@ -74,11 +71,25 @@ func main() {
 	}
 
 	for i := 0; i < len(reports); i++ {
-		check1 := safe_check_1(reports[i])
-		check2 := safe_check_2(reports[i])
+		singleReport := reports[i]
+		check1 := safe_check_1(singleReport)
+		check2 := safe_check_2(singleReport)
 
 		if check1 == 1 && check2 == 1 {
 			safe++
+		} else {
+			for j := 0; j < len(singleReport); j++ {
+				fmt.Println(singleReport)
+				temp := append([]int{}, singleReport[:j]...)
+				temp = append(temp, singleReport[j+1:]...)
+				fmt.Println(temp)
+				check1 = safe_check_1(temp)
+				check2 = safe_check_2(temp)
+				if check1 == 1 && check2 == 1 {
+					safe++
+					break
+				}
+			}
 		}
 	}
 	fmt.Println(safe)
