@@ -7,224 +7,87 @@ import (
 	"strings"
 )
 
-func neCheck2(array [][]string, arrayIdx int, lineIdx int) int {
-	if arrayIdx < 2 || (lineIdx > 137) {
-		return 0
-	} else if array[arrayIdx][lineIdx] != "M" {
-		return 0
-	} else if array[arrayIdx-1][lineIdx+1] != "A" {
-		return 0
-	} else if array[arrayIdx-2][lineIdx+2] != "S" {
-		return 0
-	}
-	return 1
+type Direction struct {
+	RowStep, ColStep int
+	Pattern          []string
 }
 
-func nwCheck2(array [][]string, arrayIdx int, lineIdx int) int {
-	if arrayIdx < 2 || lineIdx < 2 {
-		return 0
-	} else if array[arrayIdx][lineIdx] != "M" {
-		return 0
-	} else if array[arrayIdx-1][lineIdx-1] != "A" {
-		return 0
-	} else if array[arrayIdx-2][lineIdx-2] != "S" {
-		return 0
-	}
-	return 1
-}
+func checkPattern(array [][]string, startRow, startCol int, direction Direction) bool {
+	for step, char := range direction.Pattern {
+		row := startRow + step*direction.RowStep
+		col := startCol + step*direction.ColStep
 
-func seCheck2(array [][]string, arrayIdx int, lineIdx int) int {
-	if arrayIdx > 137 || lineIdx > 137 {
-		return 0
-	} else if array[arrayIdx][lineIdx] != "M" {
-		return 0
-	} else if array[arrayIdx+1][lineIdx+1] != "A" {
-		return 0
-	} else if array[arrayIdx+2][lineIdx+2] != "S" {
-		return 0
-	}
-	return 1
-}
+		if row < 0 || row >= len(array) || col < 0 || col >= len(array[row]) {
+			return false
+		}
 
-func swCheck2(array [][]string, arrayIdx int, lineIdx int) int {
-	if arrayIdx > 137 || lineIdx < 2 {
-		return 0
-	} else if array[arrayIdx][lineIdx] != "M" {
-		return 0
-	} else if array[arrayIdx+1][lineIdx-1] != "A" {
-		return 0
-	} else if array[arrayIdx+2][lineIdx-2] != "S" {
-		return 0
+		if array[row][col] != char {
+			return false
+		}
 	}
-	return 1
-}
-
-func nCheck(array [][]string, arrayIdx int, lineIdx int) int {
-	if arrayIdx < 2 {
-		return 0
-	} else if array[arrayIdx][lineIdx] != "X" {
-		return 0
-	} else if array[arrayIdx-1][lineIdx] != "M" {
-		return 0
-	} else if array[arrayIdx-2][lineIdx] != "A" {
-		return 0
-	} else if array[arrayIdx-3][lineIdx] != "S" {
-		return 0
-	}
-	return 1
-}
-
-func sCheck(array [][]string, arrayIdx int, lineIdx int) int {
-	if arrayIdx > 136 {
-		return 0
-	} else if array[arrayIdx][lineIdx] != "X" {
-		return 0
-	} else if array[arrayIdx+1][lineIdx] != "M" {
-		return 0
-	} else if array[arrayIdx+2][lineIdx] != "A" {
-		return 0
-	} else if array[arrayIdx+3][lineIdx] != "S" {
-		return 0
-	}
-	return 1
-}
-
-func neCheck(array [][]string, arrayIdx int, lineIdx int) int {
-	if arrayIdx < 2 || (lineIdx > 136) {
-		return 0
-	} else if array[arrayIdx][lineIdx] != "X" {
-		return 0
-	} else if array[arrayIdx-1][lineIdx+1] != "M" {
-		return 0
-	} else if array[arrayIdx-2][lineIdx+2] != "A" {
-		return 0
-	} else if array[arrayIdx-3][lineIdx+3] != "S" {
-		return 0
-	}
-	return 1
-}
-
-func nwCheck(array [][]string, arrayIdx int, lineIdx int) int {
-	if arrayIdx < 2 || lineIdx < 3 {
-		return 0
-	} else if array[arrayIdx][lineIdx] != "X" {
-		return 0
-	} else if array[arrayIdx-1][lineIdx-1] != "M" {
-		return 0
-	} else if array[arrayIdx-2][lineIdx-2] != "A" {
-		return 0
-	} else if array[arrayIdx-3][lineIdx-3] != "S" {
-		return 0
-	}
-	return 1
-}
-
-func seCheck(array [][]string, arrayIdx int, lineIdx int) int {
-	if arrayIdx > 136 || lineIdx > 136 {
-		return 0
-	} else if array[arrayIdx][lineIdx] != "X" {
-		return 0
-	} else if array[arrayIdx+1][lineIdx+1] != "M" {
-		return 0
-	} else if array[arrayIdx+2][lineIdx+2] != "A" {
-		return 0
-	} else if array[arrayIdx+3][lineIdx+3] != "S" {
-		return 0
-	}
-	return 1
-}
-
-func swCheck(array [][]string, arrayIdx int, lineIdx int) int {
-	if arrayIdx > 136 || lineIdx < 3 {
-		return 0
-	} else if array[arrayIdx][lineIdx] != "X" {
-		return 0
-	} else if array[arrayIdx+1][lineIdx-1] != "M" {
-		return 0
-	} else if array[arrayIdx+2][lineIdx-2] != "A" {
-		return 0
-	} else if array[arrayIdx+3][lineIdx-3] != "S" {
-		return 0
-	}
-	return 1
-}
-
-func eCheck(array [][]string, arrayIdx int, lineIdx int) int {
-	if lineIdx > 136 {
-		return 0
-	} else if array[arrayIdx][lineIdx] != "X" {
-		return 0
-	} else if array[arrayIdx][lineIdx+1] != "M" {
-		return 0
-	} else if array[arrayIdx][lineIdx+2] != "A" {
-		return 0
-	} else if array[arrayIdx][lineIdx+3] != "S" {
-		return 0
-	}
-	return 1
-}
-
-func wCheck(array [][]string, arrayIdx int, lineIdx int) int {
-	if lineIdx < 3 {
-		return 0
-	} else if array[arrayIdx][lineIdx] != "X" {
-		return 0
-	} else if array[arrayIdx][lineIdx-1] != "M" {
-		return 0
-	} else if array[arrayIdx][lineIdx-2] != "A" {
-		return 0
-	} else if array[arrayIdx][lineIdx-3] != "S" {
-		return 0
-	}
-	return 1
+	return true
 }
 
 func xmasCheck(array [][]string) int {
+	directions := []Direction{
+		{RowStep: -1, ColStep: 0, Pattern: []string{"X", "M", "A", "S"}},  // North
+		{RowStep: 1, ColStep: 0, Pattern: []string{"X", "M", "A", "S"}},   // South
+		{RowStep: 0, ColStep: 1, Pattern: []string{"X", "M", "A", "S"}},   // East
+		{RowStep: 0, ColStep: -1, Pattern: []string{"X", "M", "A", "S"}},  // West
+		{RowStep: -1, ColStep: 1, Pattern: []string{"X", "M", "A", "S"}},  // Northeast
+		{RowStep: -1, ColStep: -1, Pattern: []string{"X", "M", "A", "S"}}, // Northwest
+		{RowStep: 1, ColStep: 1, Pattern: []string{"X", "M", "A", "S"}},   // Southeast
+		{RowStep: 1, ColStep: -1, Pattern: []string{"X", "M", "A", "S"}},  // Southwest
+	}
 	total := 0
-	for i := 0; i < len(array); i++ {
-		for j := 0; j < len(array[i]); j++ {
-			total += nCheck(array, i, j)
-			total += sCheck(array, i, j)
-			total += neCheck(array, i, j)
-			total += nwCheck(array, i, j)
-			total += seCheck(array, i, j)
-			total += swCheck(array, i, j)
-			total += eCheck(array, i, j)
-			total += wCheck(array, i, j)
+
+	for row := 0; row < len(array); row++ {
+		for col := 0; col < len(array[row]); col++ {
+			for _, dir := range directions {
+				if checkPattern(array, row, col, dir) {
+					total++
+				}
+			}
 		}
 	}
+
 	return total
 }
 
 func part2(array [][]string) int {
+	directions := map[string]Direction{
+		"NE": {RowStep: -1, ColStep: 1, Pattern: []string{"M", "A", "S"}},
+		"SE": {RowStep: 1, ColStep: 1, Pattern: []string{"M", "A", "S"}},
+		"NW": {RowStep: -1, ColStep: -1, Pattern: []string{"M", "A", "S"}},
+		"SW": {RowStep: 1, ColStep: -1, Pattern: []string{"M", "A", "S"}},
+	}
 	total := 0
-	for i := 0; i < len(array); i++ {
-		for j := 0; j < len(array[i]); j++ {
-			if neCheck2(array, i, j) == 1 {
-				if seCheck2(array, i-2, j) == 1 {
-					fmt.Println(array[i][j], array[i-1][j+1], array[i-2][j+2])
-					fmt.Println(array[i-2][j], array[i-1][j+1], array[i-2][j+2])
-					total++
-				}
-			}
-			if nwCheck2(array, i, j) == 1 {
-				if swCheck2(array, i-2, j) == 1 {
-					total++
-				}
-			}
 
-			if neCheck2(array, i, j) == 1 {
-				if nwCheck2(array, i, j+2) == 1 {
+	for row := 0; row < len(array); row++ {
+		for col := 0; col < len(array[row]); col++ {
+			if checkPattern(array, row, col, directions["NE"]) {
+				if checkPattern(array, row-2, col, directions["SE"]) {
 					total++
 				}
 			}
-			if seCheck2(array, i, j) == 1 {
-				if swCheck2(array, i, j+2) == 1 {
+			if checkPattern(array, row, col, directions["NW"]) {
+				if checkPattern(array, row-2, col, directions["SW"]) {
+					total++
+				}
+			}
+			if checkPattern(array, row, col, directions["NE"]) {
+				if checkPattern(array, row, col+2, directions["NW"]) {
+					total++
+				}
+			}
+			if checkPattern(array, row, col, directions["SE"]) {
+				if checkPattern(array, row, col+2, directions["SW"]) {
 					total++
 				}
 			}
 		}
 	}
+
 	return total
 }
 
@@ -245,7 +108,6 @@ func main() {
 		array = append(array, splitLine)
 	}
 
-	fmt.Println(xmasCheck(array))
-
-	fmt.Println(part2(array))
+	fmt.Println("Part 1:", xmasCheck(array))
+	fmt.Println("Part 2:", part2(array))
 }
