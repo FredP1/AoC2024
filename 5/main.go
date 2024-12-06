@@ -26,13 +26,101 @@ func convertTo2DIntArray(strArray [][]string) ([][]int, error) {
 	return intArray, nil
 }
 
-func createPageOrder(pageOrderingString [][]int) []int {
-	var sortedPages []int
-	for i := 0; i < len(pageOrderingString); i++ {
-
+func reorderLine(updateLine []int, pageOrderingLine [][]int) []int {
+	orderedPairs := make(map[int][]int)
+	for _, pair := range pageOrderingLine {
+		firstNum, secondNum := pair[0], pair[1]
+		orderedPairs[firstNum] = append(orderedPairs[firstNum], secondNum)
 	}
-	return sortedPages
 
+	for {
+		swapped := false
+		for i := 0; i < len(updateLine)-1; i++ {
+			for _, secondNum := range orderedPairs[updateLine[i]] {
+				if updateLine[i+1] == secondNum {
+					updateLine[i], updateLine[i+1] = updateLine[i+1], updateLine[i]
+					swapped = true
+				}
+			}
+		}
+		if !swapped {
+			break
+		}
+	}
+
+	return updateLine
+}
+
+func findMiddleUpdate(updateLine [][]int) int {
+	sum := 0
+	for i := 0; i < len(updateLine); i++ {
+		n := len(updateLine[i])
+		if n == 0 {
+			break
+		}
+		midIndex := n / 2
+		if n%2 == 0 {
+			midIndex = midIndex - 1
+			sum += updateLine[i][midIndex]
+		}
+		sum += updateLine[i][midIndex]
+	}
+	return sum
+}
+
+func parseUpdate(updateLine []int, firstNum int, secondNum int) bool {
+	index1, index2 := -1, -1
+	for i, v := range updateLine {
+		if v == firstNum && index1 == -1 {
+			index1 = i
+		}
+		if v == secondNum && index2 == -1 {
+			index2 = i
+		}
+	}
+	if index1 == -1 || index2 == -1 {
+		return true
+	}
+	if index1 < index2 {
+		return true
+	}
+	return false
+}
+
+func parseUpdates(pageOrderingInt [][]int, updatesInt [][]int) (int, int) {
+	updatesLen := len(updatesInt)
+	pageOrderingLen := len(pageOrderingInt)
+	var correctLines [][]int
+	var wrongLines [][]int
+	correctMiddles := 0
+	wrongMiddles := 0
+	for i := 0; i < updatesLen; i++ {
+		deadLine := false
+		updateLine := updatesInt[i]
+		for j := 0; j < pageOrderingLen; j++ {
+			pageOrderingLine := pageOrderingInt[j]
+			firstNum := pageOrderingLine[0]
+			secondNum := pageOrderingLine[1]
+			if !parseUpdate(updateLine, firstNum, secondNum) {
+				deadLine = true
+				updateLine = reorderLine(updateLine, pageOrderingInt)
+				break
+			}
+		}
+		if deadLine {
+			wrongLines = append(wrongLines, updateLine)
+		} else {
+			correctLines = append(correctLines, updateLine)
+		}
+	}
+
+	correctMiddles += findMiddleUpdate(correctLines)
+
+	for _, wrongLine := range wrongLines {
+		wrongMiddles += findMiddleUpdate([][]int{wrongLine})
+	}
+
+	return correctMiddles, wrongMiddles
 }
 
 func main() {
@@ -76,8 +164,5 @@ func main() {
 		return
 	}
 
-	pagesOrdered := createPageOrder(pageOrderingInt)
-
-	fmt.Println(pagesOrdered)
-	fmt.Println(updatesInt)
+	fmt.Println(parseUpdates(pageOrderingInt, updatesInt))
 }
