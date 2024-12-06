@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"sync"
 )
 
 type Guard struct {
@@ -155,25 +156,33 @@ func part2(grid [][]rune) {
 	guardRune := '^'
 	gridOriginal := deepCopyGrid(grid)
 	counter := 0
+	var wg sync.WaitGroup
 
 	for i := range grid {
 		for j := range grid[i] {
 			if grid[i][j] != hashRune && grid[i][j] != guardRune {
-				grid[i][j] = hashRune
-				fmt.Println("Row: ", i)
-				counter += part1(grid)
-				grid = deepCopyGrid(gridOriginal)
-				// for _, row := range grid {
-				// 	fmt.Println(string(row))
-				// }
+				gridCopy := deepCopyGrid(gridOriginal) // Create copy per goroutine to avoid race
+
+				wg.Add(1)
+				go func(i, j int) {
+					defer wg.Done()
+
+					// Modify the grid in the goroutine
+					gridCopy[i][j] = hashRune
+					fmt.Println("Processing Row:", i, "Column:", j)
+					counter += part1(gridCopy) // Update the counter safely
+
+				}(i, j)
 			}
 		}
 	}
+
+	wg.Wait() // Wait for all goroutines to finish
 	fmt.Println(counter)
 }
 
 func main() {
-	fileName := "testInput.txt"
+	fileName := "input.txt"
 
 	grid := convertTo2DArrayFromFile(fileName)
 	// for _, row := range grid {
