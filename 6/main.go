@@ -12,18 +12,6 @@ type Guard struct {
 	yPosition         int
 }
 
-func countGrid(grid [][]rune) int {
-	count := 0
-	for _, row := range grid {
-		for _, char := range row {
-			if char == 'X' || char == '^' {
-				count++
-			}
-		}
-	}
-	return count
-}
-
 func (g *Guard) checkForObstacle(grid [][]rune) bool {
 	hashRune := '#'
 	if g.movementDirection == 1 { //North
@@ -185,7 +173,7 @@ func part2(grid [][]rune) {
 }
 
 func main() {
-	fileName := "input.txt"
+	fileName := "testInput.txt"
 
 	grid := convertTo2DArrayFromFile(fileName)
 	// for _, row := range grid {
