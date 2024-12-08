@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -25,7 +26,6 @@ func convertInputToMap(fileName string) map[int][]int {
 				var key int
 				fmt.Sscanf(parts[0], "%d", &key)
 
-				// Parse the values
 				valueParts := strings.Fields(parts[1])
 				var values []int
 				for _, value := range valueParts {
@@ -43,7 +43,7 @@ func convertInputToMap(fileName string) map[int][]int {
 
 func generatePermutations(values []int) []int {
 	var results []int
-	operators := []string{"+", "*"}
+	operators := []string{"+", "*", "||"}
 	n := len(values)
 
 	combinations := generateOperatorCombinations(n-1, operators)
@@ -80,6 +80,12 @@ func evaluateExpression(arr []int, operators []string) int {
 			result += arr[i+1]
 		case "*":
 			result *= arr[i+1]
+		case "||":
+			concat, err := strconv.Atoi(strconv.Itoa(result) + strconv.Itoa(arr[i+1]))
+			if err != nil {
+				fmt.Println("Error your mam")
+			}
+			result = concat
 		}
 	}
 	return result
@@ -98,10 +104,10 @@ func part1Test(inputMap map[int][]int) int {
 		}
 
 		if matched {
-			fmt.Printf("Target %d can be achieved with the array %v\n", key, values)
+			// fmt.Printf("Target %d can be achieved with the array %v\n", key, values)
 			correctValues += key
 		} else {
-			fmt.Printf("Target %d cannot be achieved with the array %v\n", key, values)
+			// fmt.Printf("Target %d cannot be achieved with the array %v\n", key, values)
 		}
 	}
 	return correctValues
