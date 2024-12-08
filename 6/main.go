@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"sync"
+	"time"
 )
 
 type Guard struct {
@@ -156,6 +157,7 @@ func part2(grid [][]rune) {
 	guardRune := '^'
 	gridOriginal := deepCopyGrid(grid)
 	counter := 0
+	start := time.Now()
 	var wg sync.WaitGroup
 
 	for i := range grid {
@@ -178,7 +180,8 @@ func part2(grid [][]rune) {
 	}
 
 	wg.Wait() // Wait for all goroutines to finish
-	fmt.Println(counter)
+	elapsed := time.Since(start)
+	fmt.Println(counter, elapsed)
 }
 
 func main() {
